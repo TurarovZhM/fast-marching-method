@@ -1,7 +1,7 @@
 
 # Created by https://www.gitignore.io/api/qt,vim,tex,sass,emacs,latex,python,pycharm,haskell,archive,archives,netbeans,assembler,qtcreator
 # Edit at https://www.gitignore.io/?templates=qt,vim,tex,sass,emacs,latex,python,pycharm,haskell,archive,archives,netbeans,assembler,qtcreator
-
+.vscode
 ### Archive ###
 
 ### Mostly from https://en.wikipedia.org/wiki/List_of_archive_formats

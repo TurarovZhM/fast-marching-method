@@ -1,5 +1,3 @@
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
 import numpy as np
 from pqueue import PQueue
 from enum import Enum
@@ -12,34 +10,34 @@ class State(Enum):
     FROZEN = 3
 
 
-def check(p: (int, int), mesh):
+def _check(p: (int, int), mesh):
     return 0 <= p[0] < len(mesh) and 0 <= p[1] < len(mesh[0])
 
 
-def neighbours(p: (int, int), mesh):
+def _neighbours(p: (int, int), mesh):
     lst = [(p[0] - 1, p[1]),
            (p[0] + 1, p[1]),
            (p[0], p[1] - 1),
            (p[0], p[1] + 1)]
 
-    return list(filter(lambda p: check(p, mesh), lst))
+    return list(filter(lambda p: _check(p, mesh), lst))
 
 
-def val(color):
+def _val(color):
     r, g, b, _ = color
-    return r + g + b  # TODO
+    return (r + g + b) / 3
 
 
-def distance(p: (int, int), mesh, status):
+def _distance(p: (int, int), mesh, status):
     def value(x: (int, int)):
-        return val(mesh[x])
+        return _val(mesh[x])
 
     def choose(p1: (int, int), p2: (int, int), *_, default=0):
-        if check(p1, mesh) and status[p1] == State.FROZEN and check(p2, mesh) and status[p2] == State.FROZEN:
+        if _check(p1, mesh) and status[p1] == State.FROZEN and _check(p2, mesh) and status[p2] == State.FROZEN:
             return min(value(p1), value(p2))
-        elif check(p1, mesh) and status[p1] == State.FROZEN:
+        elif _check(p1, mesh) and status[p1] == State.FROZEN:
             return value(p1)
-        elif check(p2, mesh) and status[p2] == State.FROZEN:
+        elif _check(p2, mesh) and status[p2] == State.FROZEN:
             return value(p2)
         return default
 
@@ -70,8 +68,8 @@ def fmm(mesh, start, *_, fillcolor=None, field=1.0):
     # init
     dist[start] = 0
     status[start] = State.FROZEN
-    for v in neighbours(start, mesh):
-        dst = distance(v, mesh, status)
+    for v in _neighbours(start, mesh):
+        dst = _distance(v, mesh, status)
         if status[v] != State.NB:
             status[v] = State.NB
             dist[v] = dst
@@ -86,15 +84,15 @@ def fmm(mesh, start, *_, fillcolor=None, field=1.0):
         status[v] = State.FROZEN
         dist[v] = dst
 
-        for vn in neighbours(v, mesh):
+        for vn in _neighbours(v, mesh):
             if status[vn] == State.FROZEN:
                 continue
-            d = distance(vn, mesh, status)
+            d = _distance(vn, mesh, status)
             if status[vn] != State.NB:
                 status[vn] = State.NB
                 pqueue.push(d, vn)
             else:
-                # assert dist[vn] >= d  # TODO
+                # assert dist[vn] >= d  # TODO fails
                 pqueue.repos(vn, d)
 
     # result
@@ -104,20 +102,3 @@ def fmm(mesh, start, *_, fillcolor=None, field=1.0):
         for col in range(len(dist[0])):
             if dist[row][col] <= field:
                 mesh[row][col] = fillcolor
-
-
-def main():
-    img = mpimg.imread('img1.png')
-    plt.figure(figsize=(10, 10))
-    plt.imshow(img)
-
-    x = plt.ginput(1)[0]
-    x = (int(round(x[1])), int(round(x[0])))
-    fmm(img, x, field=0.9)
-    plt.imshow(img)
-
-    plt.show()
-
-
-if __name__ == "__main__":
-    main()

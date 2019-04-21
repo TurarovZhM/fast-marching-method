@@ -12,7 +12,7 @@ def main():
 
     x = plt.ginput(1)[0]
     x = (int(round(x[1])), int(round(x[0])))
-    ffm.fmm(img, x)
+    ffm.fmm(img, x, field=8)
     plt.imshow(img)
 
     plt.show()

@@ -6,20 +6,19 @@ class PQueue:
         self.q = []
 
     def push(self, key, value):
-        hq.heappush(self.q, (key, value))
+        hq.heappush(self.q, [key, value])
 
     def pop(self):
         return hq.heappop(self.q)
 
     def repos(self, value, new_key):
         for i in range(len(self.q)):
-            k, v = self.q[i]
-            if v == value:
-                self.q[i] = (new_key, value)
-                hq.heapify(self.q)
+            if self.q[i][1] == value:
                 break
         else:
-            assert False, "no such elem in priority queue"
+            assert False, "No such key in priority queue"
+        self.q[i][0] = new_key
+        hq._siftdown(self.q, 0, i)  # accessing protected member is all right
 
     def __repr__(self):
         return "PQueue"

@@ -15,12 +15,12 @@ def _check(p: (int, int), mesh):
 
 
 def _neighbours(p: (int, int), mesh):
-    lst = [(p[0] - 1, p[1]),
-           (p[0] + 1, p[1]),
-           (p[0], p[1] - 1),
-           (p[0], p[1] + 1)]
+    ps = [(p[0] - 1, p[1]),
+          (p[0] + 1, p[1]),
+          (p[0], p[1] - 1),
+          (p[0], p[1] + 1)]
 
-    return list(filter(lambda p: _check(p, mesh), lst))
+    return list(filter(lambda p: _check(p, mesh), ps))
 
 
 def _val(color):
@@ -69,7 +69,7 @@ def _distance(p: (int, int), mesh, t, state):
     elif pb is None:
         return default()
 
-    d = (ta + tb)**2 - 2 * (ta**2 + tb**2 - 1 / dif**2)
+    d = (ta + tb) ** 2 - 2 * (ta ** 2 + tb ** 2 - 1 / dif ** 2)
     if d > 1e-10:
         return (ta + tb + math.sqrt(d)) / 2
     return default()
